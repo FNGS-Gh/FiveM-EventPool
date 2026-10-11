@@ -4,3 +4,8 @@
 This standalone script
 
 *More details can be found below under the* **"2. Description"** *section ▼*
+
+## 1. Installation
+❗️ *This project is published under the MIT License. Upon using it, please make sure to keep the credits and apply the same type of licensing.*
+
+---
