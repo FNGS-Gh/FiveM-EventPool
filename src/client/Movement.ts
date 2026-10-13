@@ -1,4 +1,4 @@
-import { Prefix, PlayerInfo, PedState } from './EventPool';
+import { Prefix, PlayerInfo } from './EventPool';
 
 enum BaseMoveEvent {
   STILL     = `${Prefix.MOVEMENT}Still`,
@@ -14,7 +14,7 @@ enum MoveEvent {
   ON_STAIRS = `${Prefix.MOVEMENT}OnStairs`,
 }
 
-class PedMovement extends PedState {
+class PedMovement extends PlayerInfo {
   private _pos: number[] = [0, 0, 0];
   private _state: BaseMoveEvent = BaseMoveEvent.STILL;
 
@@ -91,7 +91,7 @@ enum WaterEvent {
   DROWNING    = `${Prefix.WATER}Drowning`,
 }
 
-class PedWater extends PedState {
+class PedWater extends PlayerInfo {
   public inWater = false;
   public underwater = false;
   public diving = false;

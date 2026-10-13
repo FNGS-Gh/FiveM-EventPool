@@ -5,7 +5,7 @@ export enum Prefix {
 }
 
 // Main parent class to store player Ped and ID values
-export abstract class PlayerInfo {
+export class PlayerInfo {
   private static _ped = -1;
   private static _id = -1;
 
@@ -21,16 +21,16 @@ export abstract class PlayerInfo {
     PlayerInfo._ped = IsEntityAPed(ped) ? ped : PlayerPedId();
   }
 
+  protected toggleField(key: keyof this, eventName: string) {
+    if (typeof this[key] === 'boolean') {
+      this[key] != this[key];
+      emit(eventName, this[key]);
+    }
+  }
+
   public static update() {
     if (PlayerInfo._ped === -1) PlayerInfo._ped = PlayerPedId();
     if (PlayerInfo._id === -1) PlayerInfo._id = PlayerId();
-  }
-}
-
-export class PedState extends PlayerInfo {
-  protected toggleField(key: keyof this, eventName: string) {
-    this[key] != this[key];
-    emit(eventName, this[key]);
   }
 }
 
