@@ -1,13 +1,13 @@
 // Change this one if you wish to use custom prefixes
 export enum Prefix {
-  MOVEMENT = 'Movement:',
-  WATER = 'Water:',
+  MOVEMENT  = 'Movement:',
+  WATER     = 'Water:',
 }
 
 // Main parent class to store player Ped and ID values
 export class PlayerInfo {
   private static _ped = -1;
-  private static _id = -1;
+  private static _id  = -1;
 
   protected static get id(): number {
     return PlayerInfo._id;

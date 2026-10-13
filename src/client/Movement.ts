@@ -1,5 +1,8 @@
 import { Prefix, PlayerInfo } from './EventPool';
 
+
+
+// Ground movement
 enum BaseMoveEvent {
   STILL     = `${Prefix.MOVEMENT}Still`,
   WALKING   = `${Prefix.MOVEMENT}Walking`,
@@ -15,12 +18,12 @@ enum MoveEvent {
 }
 
 class PedMovement extends PlayerInfo {
-  private _pos: number[] = [0, 0, 0];
+  private _pos: number[]        = [0, 0, 0];
   private _state: BaseMoveEvent = BaseMoveEvent.STILL;
 
-  public moving = false;
-  public stealth = false;
-  public ragdoll = false;
+  public moving   = false;
+  public stealth  = false;
+  public ragdoll  = false;
   public onStairs = false;
 
   private get pos(): number[] {
@@ -84,6 +87,9 @@ class PedMovement extends PlayerInfo {
   }
 }
 
+
+
+// Water movement
 enum WaterEvent {
   IN_WATER    = `${Prefix.WATER}InWater`,
   UNDERWATER  = `${Prefix.WATER}Underwater`,
@@ -92,10 +98,10 @@ enum WaterEvent {
 }
 
 class PedWater extends PlayerInfo {
-  public inWater = false;
+  public inWater    = false;
   public underwater = false;
-  public diving = false;
-  public drowning = false;
+  public diving     = false;
+  public drowning   = false;
 
   public loop() {
     if (IsPedSwimming(PlayerInfo.ped) !== this.inWater)
@@ -112,25 +118,27 @@ class PedWater extends PlayerInfo {
   }
 }
 
-const movementFlags: Record<string, boolean> = {
-  moving: false,
-  still: false,
-  stealth: false,
-  walking: false,
-  running: false,
-  sprinting: false,
-  exhausted: false,
-  
-  inAir: false,
-  jumping: false,
-  diving: false,
-  falling: false,
-  climbing: false,
 
-  swimming: false,
-  underwater: false,
-  drowning: false,
-};
 
-const Movement = new PedMovement;
-const Water = new PedWater;
+// Air movement
+enum AirEvents {
+  IN_AIR,
+  JUMPING,
+  FALLING,
+  CLIMBING,
+}
+
+class PedAir extends PlayerInfo {
+  public inAir    = false;
+  public jumping  = false;
+  public falling  = false;
+  public climbing = false;
+
+  public loop() {
+
+  }
+}
+
+export const Movement = new PedMovement;
+export const Water = new PedWater;
+export const Air = new PedAir;
