@@ -122,10 +122,10 @@ class PedWater extends PlayerInfo {
 
 // Air movement
 enum AirEvents {
-  IN_AIR,
-  JUMPING,
-  FALLING,
-  CLIMBING,
+  IN_AIR    = `${Prefix.AIR}InAir`,
+  JUMPING   = `${Prefix.AIR}Jumping`,
+  FALLING   = `${Prefix.AIR}Falling`,
+  CLIMBING  = `${Prefix.AIR}Climbing`,
 }
 
 class PedAir extends PlayerInfo {
@@ -135,7 +135,17 @@ class PedAir extends PlayerInfo {
   public climbing = false;
 
   public loop() {
+    if (IsEntityInAir(PlayerInfo.ped) !== this.inAir)
+      this.toggleField('inAir', AirEvents.IN_AIR);
 
+    if (IsPedJumping(PlayerInfo.ped) !== this.jumping)
+      this.toggleField('jumping', AirEvents.JUMPING);
+
+    if (IsPedFalling(PlayerInfo.ped) !== this.falling)
+      this.toggleField('falling', AirEvents.FALLING);
+
+    if (IsPedClimbing(PlayerInfo.ped) !== this.climbing)
+      this.toggleField('climbing', AirEvents.CLIMBING);
   }
 }
 
