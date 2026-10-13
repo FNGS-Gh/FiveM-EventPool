@@ -21,16 +21,16 @@ export class PlayerInfo {
     PlayerInfo._ped = IsEntityAPed(ped) ? ped : PlayerPedId();
   }
 
+  public static update() {
+    if (PlayerInfo._ped === -1) PlayerInfo._ped = PlayerPedId();
+    if (PlayerInfo._id === -1) PlayerInfo._id = PlayerId();
+  }
+  
   protected toggleField(key: keyof this, eventName: string) {
     if (typeof this[key] === 'boolean') {
       this[key] != this[key];
       emit(eventName, this[key]);
     }
-  }
-
-  public static update() {
-    if (PlayerInfo._ped === -1) PlayerInfo._ped = PlayerPedId();
-    if (PlayerInfo._id === -1) PlayerInfo._id = PlayerId();
   }
 }
 
