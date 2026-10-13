@@ -51,3 +51,7 @@ on('playerLoaded', () => {
 on('PedChanged', (ped: number) => { // Edit 'PedChanged' to whatever client event handles player's ped change
   PlayerInfo.ped = ped;
 });
+
+globalThis.exports('IsMoving', () => Movement.moving);
+globalThis.exports('IsOnStairs', () => Movement.onStairs);
+globalThis.exports('IsDrowning', () => Water.drowning);

@@ -1,7 +1,5 @@
 import { Prefix, PlayerInfo } from './EventPool';
 
-
-
 // Ground movement
 enum BaseMoveEvent {
   STILL     = `${Prefix.MOVEMENT}Still`,
@@ -87,8 +85,6 @@ class PedMovement extends PlayerInfo {
   }
 }
 
-
-
 // Water movement
 enum WaterEvent {
   IN_WATER    = `${Prefix.WATER}InWater`,
@@ -117,8 +113,6 @@ class PedWater extends PlayerInfo {
       this.toggleField('drowning', WaterEvent.DROWNING);
   }
 }
-
-
 
 // Air movement
 enum AirEvents {
