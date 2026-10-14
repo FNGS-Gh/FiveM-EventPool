@@ -1,20 +1,7 @@
-import { Prefix, PlayerInfo } from './main';
+import { PlayerInfo } from './main';
+import { BaseMoveEvent, MoveEvent, WaterEvent, AirEvent } from './utils';
 
 // Ground movement
-enum BaseMoveEvent {
-  STILL     = `${Prefix.MOVEMENT}Still`,
-  WALKING   = `${Prefix.MOVEMENT}Walking`,
-  RUNNING   = `${Prefix.MOVEMENT}Running`,
-  SPRINTING = `${Prefix.MOVEMENT}Sprinting`,
-}
-
-enum MoveEvent {
-  MOVING    = `${Prefix.MOVEMENT}Moving`,
-  STEALTH   = `${Prefix.MOVEMENT}Stealth`,
-  RAGDOLL   = `${Prefix.MOVEMENT}Ragdoll`,
-  ON_STAIRS = `${Prefix.MOVEMENT}OnStairs`,
-}
-
 class PedMovement extends PlayerInfo {
   private _pos: number[]        = [0, 0, 0];
   private _state: BaseMoveEvent = BaseMoveEvent.STILL;
@@ -86,13 +73,6 @@ class PedMovement extends PlayerInfo {
 }
 
 // Water movement
-enum WaterEvent {
-  IN_WATER    = `${Prefix.WATER}InWater`,
-  UNDERWATER  = `${Prefix.WATER}Underwater`,
-  DIVING      = `${Prefix.WATER}Diving`,
-  DROWNING    = `${Prefix.WATER}Drowning`,
-}
-
 class PedWater extends PlayerInfo {
   public inWater    = false;
   public underwater = false;
@@ -115,13 +95,6 @@ class PedWater extends PlayerInfo {
 }
 
 // Air movement
-enum AirEvents {
-  IN_AIR    = `${Prefix.AIR}InAir`,
-  JUMPING   = `${Prefix.AIR}Jumping`,
-  FALLING   = `${Prefix.AIR}Falling`,
-  CLIMBING  = `${Prefix.AIR}Climbing`,
-}
-
 class PedAir extends PlayerInfo {
   public inAir    = false;
   public jumping  = false;
@@ -130,16 +103,16 @@ class PedAir extends PlayerInfo {
 
   public loop() {
     if (IsEntityInAir(PlayerInfo.ped) !== this.inAir)
-      this.toggleField('inAir', AirEvents.IN_AIR);
+      this.toggleField('inAir', AirEvent.IN_AIR);
 
     if (IsPedJumping(PlayerInfo.ped) !== this.jumping)
-      this.toggleField('jumping', AirEvents.JUMPING);
+      this.toggleField('jumping', AirEvent.JUMPING);
 
     if (IsPedFalling(PlayerInfo.ped) !== this.falling)
-      this.toggleField('falling', AirEvents.FALLING);
+      this.toggleField('falling', AirEvent.FALLING);
 
     if (IsPedClimbing(PlayerInfo.ped) !== this.climbing)
-      this.toggleField('climbing', AirEvents.CLIMBING);
+      this.toggleField('climbing', AirEvent.CLIMBING);
   }
 }
 
