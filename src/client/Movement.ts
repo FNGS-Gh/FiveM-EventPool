@@ -1,4 +1,4 @@
-import { Prefix, PlayerInfo } from './EventPool';
+import { Prefix, PlayerInfo } from './main';
 
 // Ground movement
 enum BaseMoveEvent {
