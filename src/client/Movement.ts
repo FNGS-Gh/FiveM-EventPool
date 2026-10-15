@@ -1,5 +1,5 @@
 import { PlayerInfo } from './main';
-import { BaseMoveEvent, MoveEvent, WaterEvent, AirEvent } from './utils';
+import { BaseMoveEvent, MoveEvent, WaterEvent, AirEvent } from './events';
 
 // Ground movement
 class PedMovement extends PlayerInfo {
@@ -52,21 +52,19 @@ class PedMovement extends PlayerInfo {
     const ped = PlayerInfo.ped;
     const pos = GetEntityCoords(ped);
 
-    if (this.moving === pos.every((val, idx) => val === this.pos[idx])) {
-      this.moving != this.moving;
-      emit(MoveEvent.MOVING, this.moving, pos);
-    }
-    
+    if (this.moving !== !pos.every((val, idx) => val === this.pos[idx]))
+      this.sendEvent('moving', MoveEvent.MOVING);
+
     this.pos = pos;
 
     if (GetPedStealthMovement(ped) !== this.stealth)
-      this.toggleField('stealth', MoveEvent.STEALTH);
+      this.sendEvent('stealth', MoveEvent.STEALTH);
 
     if (IsPedRagdoll(ped) !== this.ragdoll)
-      this.toggleField('ragdoll', MoveEvent.RAGDOLL);
+      this.sendEvent('ragdoll', MoveEvent.RAGDOLL);
 
     if (GetPedConfigFlag(ped, 253, true) !== this.onStairs)
-      this.toggleField('onStairs', MoveEvent.ON_STAIRS);
+      this.sendEvent('onStairs', MoveEvent.ON_STAIRS);
 
     if (IsPedStill(ped))           this.state = BaseMoveEvent.STILL;
     else if (IsPedWalking(ped))    this.state = BaseMoveEvent.WALKING;
@@ -86,16 +84,16 @@ class PedWater extends PlayerInfo {
     const ped = PlayerInfo.ped;
 
     if (IsPedSwimming(ped) !== this.inWater)
-      this.toggleField('inWater', WaterEvent.IN_WATER);
+      this.sendEvent('inWater', WaterEvent.IN_WATER);
 
     if (IsPedSwimmingUnderWater(ped) !== this.underwater)
-      this.toggleField('underwater', WaterEvent.UNDERWATER);
+      this.sendEvent('underwater', WaterEvent.UNDERWATER);
 
     if (IsPedDiving(ped) !== this.diving)
-      this.toggleField('diving', WaterEvent.DIVING);
+      this.sendEvent('diving', WaterEvent.DIVING);
 
     if (GetPlayerUnderwaterTimeRemaining(PlayerInfo.id) <= 0 !== this.drowning)
-      this.toggleField('drowning', WaterEvent.DROWNING);
+      this.sendEvent('drowning', WaterEvent.DROWNING);
   }
 }
 
@@ -110,16 +108,16 @@ class PedAir extends PlayerInfo {
     const ped = PlayerInfo.ped;
 
     if (IsEntityInAir(ped) !== this.inAir)
-      this.toggleField('inAir', AirEvent.IN_AIR);
+      this.sendEvent('inAir', AirEvent.IN_AIR);
 
     if (IsPedJumping(ped) !== this.jumping)
-      this.toggleField('jumping', AirEvent.JUMPING);
+      this.sendEvent('jumping', AirEvent.JUMPING);
 
     if (IsPedFalling(ped) !== this.falling)
-      this.toggleField('falling', AirEvent.FALLING);
+      this.sendEvent('falling', AirEvent.FALLING);
 
     if (IsPedClimbing(ped) !== this.climbing)
-      this.toggleField('climbing', AirEvent.CLIMBING);
+      this.sendEvent('climbing', AirEvent.CLIMBING);
   }
 }
 

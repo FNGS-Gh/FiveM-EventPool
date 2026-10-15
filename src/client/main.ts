@@ -22,10 +22,10 @@ export class PlayerInfo {
     if (PlayerInfo._id === -1) PlayerInfo._id = PlayerId();
   }
   
-  protected toggleField(key: keyof this, eventName: string) {
+  protected sendEvent(key: keyof this, eventName: string, ...args: any[]) {
     if (typeof this[key] === 'boolean') {
       (this as any)[key] = !this[key];
-      emit(eventName, this[key]);
+      emit(eventName, this[key], ...args);
     }
   }
 }

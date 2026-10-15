@@ -1,34 +1,83 @@
 import { PlayerInfo } from './main';
-import { VehicleEvent } from './utils';
+import { BaseVehicleEvent, VehicleEvent } from './events';
+import { VehicleEntity } from './utils';
 
 // Vehicle Events Handler
 class VehicleHandler extends PlayerInfo {
-  public vehEntity: number | null = null;
+  private _state: BaseVehicleEvent = BaseVehicleEvent.IN_VEHICLE;
+
+  public vehEntity: VehicleEntity | null = null;
 
   public useVehicle = false;
-  public inVehicle  = false;
-  public entering   = false;
-  public exiting    = false;
   public moving     = false;
   public driver     = false;
   public inAir      = false;
   public onRoof     = false;
   public crashed    = false;
 
-  private reset() {
-    this.vehEntity = null;
+  private get state() {
+    return this._state;
+  }
 
+  private set state(state: BaseVehicleEvent) {
+    if (this._state !== state) {
+      if (this.vehEntity !== null)
+        emit(this._state, false, this.vehEntity.id);
+
+      emit(state, true, this.vehEntity?.id);
+      this._state = state;
+    }
+  }
+
+  public get isInVehicle(): boolean {
+    return this.useVehicle && (this._state === BaseVehicleEvent.IN_VEHICLE);
+  }
+
+  public get isEntering(): boolean {
+    return this.useVehicle && (this._state === BaseVehicleEvent.ENTERING);
+  }
+
+  public get isExiting(): boolean {
+    return this.useVehicle && (this._state === BaseVehicleEvent.EXITING);
+  }
+
+  private getVehEntity(entity: number): VehicleEntity {
+    const vehEntity: VehicleEntity = {
+      id: entity,
+      pos: [0, 0, 0]
+    };
+
+    const pos = GetEntityCoords(entity);
+    if (pos.length === 3) vehEntity.pos = pos;
+
+    return vehEntity;
+  }
+
+  private reset() {
     this.useVehicle = false;
-    this.inVehicle  = false;
-    this.entering   = false;
-    this.exiting    = false;
     this.moving     = false;
     this.driver     = false;
     this.inAir      = false;
     this.onRoof     = false;
     this.crashed    = false;
 
-    emit(VehicleEvent.USE_VEHICLE, false);
+    emit(VehicleEvent.USE_VEHICLE, false, this.vehEntity?.id);
+
+    this.vehEntity = null;
+  }
+  
+  private baseLoop(ped: number): boolean {
+    const inEnter = IsPedInAnyVehicle(ped, true);
+    const inFull = IsPedInAnyVehicle(ped, false);
+
+    if (!inFull) {
+      this.state = inEnter
+        ? BaseVehicleEvent.ENTERING
+        : BaseVehicleEvent.EXITING;
+      return true;
+    } else this.state = BaseVehicleEvent.IN_VEHICLE;
+
+    return false;
   }
 
   public loop() {
@@ -36,30 +85,24 @@ class VehicleHandler extends PlayerInfo {
     const vehicle = GetVehiclePedIsUsing(ped);
     const useVehicle = vehicle !== 0;
 
-    if (!useVehicle) {
+    if (!useVehicle && this.vehEntity !== null) {
       this.reset();
       return;
     }
 
-    this.vehEntity = vehicle;
+    if (this.vehEntity?.id !== vehicle)
+      this.vehEntity = this.getVehEntity(vehicle);
 
-    if (useVehicle !== this.useVehicle)
-      this.toggleField('useVehicle', VehicleEvent.USE_VEHICLE);
+    if (!this.useVehicle)
+      this.sendEvent('useVehicle', VehicleEvent.USE_VEHICLE, this.vehEntity.id);
 
-    const inEnter = IsPedInAnyVehicle(ped, true);
-    const inFull = IsPedInAnyVehicle(ped, false);
+    const pos = GetEntityCoords(this.vehEntity.id);
 
-    if (inFull !== this.inVehicle)
-      this.toggleField('inVehicle', VehicleEvent.IN_VEHICLE);
+    if (this.moving !== !pos.every((val, idx) => val === this.vehEntity?.pos[idx]))
+      this.sendEvent('moving', VehicleEvent.MOVING, this.vehEntity.id);
 
-    const isEntering = inEnter && !inFull;
-    if (isEntering !== this.entering)
-      this.toggleField('entering', VehicleEvent.ENTERING);
+    this.vehEntity.pos = pos;
 
-    const isExiting = !inEnter && !inFull
-    if (isExiting !== this.exiting)
-      this.toggleField('exiting', VehicleEvent.EXITING);
-
-    if (isEntering || isExiting) return;
+    if (this.baseLoop(ped)) return;
   }
 }
