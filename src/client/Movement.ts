@@ -110,14 +110,18 @@ class PedAir extends PlayerInfo {
     if (IsEntityInAir(ped) !== this.inAir)
       this.sendEvent('inAir', AirEvent.IN_AIR);
 
-    if (IsPedJumping(ped) !== this.jumping)
-      this.sendEvent('jumping', AirEvent.JUMPING);
-
     if (IsPedFalling(ped) !== this.falling)
       this.sendEvent('falling', AirEvent.FALLING);
 
     if (IsPedClimbing(ped) !== this.climbing)
       this.sendEvent('climbing', AirEvent.CLIMBING);
+  }
+
+  public tickLoop() {
+    const ped = PlayerInfo.ped;
+
+    if (IsPedJumping(ped) !== this.jumping)
+      this.sendEvent('jumping', AirEvent.JUMPING);
   }
 }
 

@@ -49,6 +49,7 @@ on('playerLoaded', () => {
 
   if (!tickThread) {
     setTick(() => {
+      Air.tickLoop();
       Vehicle.tickLoop();
       Weapon.tickLoop();
     });

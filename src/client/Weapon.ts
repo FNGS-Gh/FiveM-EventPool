@@ -55,12 +55,9 @@ class WeaponHandler extends PlayerInfo {
     const ped = PlayerInfo.ped;
 
     const weaponHash = GetCurrentPedWeapon(ped);
-    const isSwitching = weaponHash !== this.weaponHash;
 
-    if (this.switching !== isSwitching)
-      this.sendEvent('switching', WeaponEvent.SWITCHING, this.weaponHash);
-
-    this.weaponHash = weaponHash;
+    if (this.weaponHash !== weaponHash)
+      this.weaponHash = weaponHash;
 
     const armedMelee = IsPedArmed(ped, 1);
     const armedThrow = IsPedArmed(ped, 2);
@@ -76,6 +73,9 @@ class WeaponHandler extends PlayerInfo {
 
     if (this.aiming !== IsPlayerFreeAiming(PlayerInfo.id))
       this.sendEvent('aiming', WeaponEvent.AIMING, this.weaponHash);
+
+    if (this.switching !== IsPedSwappingWeapon(ped))
+      this.sendEvent('switching', WeaponEvent.SWITCHING);
 
     this.checkRoll(ped);
   }

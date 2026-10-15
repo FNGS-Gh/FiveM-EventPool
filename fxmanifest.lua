@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Ghost'
 description 'Extensive configuration of different in-game events.'
-version '1.0.3'
+version '1.0.4'
 
 client_script 'dist/client.js'
 --server_script 'dist/server.js'
