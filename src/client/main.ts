@@ -1,11 +1,5 @@
 import { Movement, Water, Air } from './Movement';
-
-// Change this one if you wish to use custom prefixes
-export enum Prefix {
-  MOVEMENT  = 'Movement:',
-  WATER     = 'Water:',
-  AIR       = 'Air:',
-}
+import { Vehicle } from './Vehicle';
 
 // Main parent class to store player Ped and ID values
 export class PlayerInfo {
@@ -29,15 +23,19 @@ export class PlayerInfo {
     if (PlayerInfo._id === -1) PlayerInfo._id = PlayerId();
   }
   
-  protected toggleField(key: keyof this, eventName: string) {
+  protected sendEvent(key: keyof this, eventName: string, ...args: any[]) {
     if (typeof this[key] === 'boolean') {
       (this as any)[key] = !this[key];
-      emit(eventName, this[key]);
+      emit(eventName, this[key], ...args);
     }
   }
 }
 
 let updInterval: NodeJS.Timeout | null = null;
+
+setTick(() => {
+  Vehicle.tickLoop();
+});
 
 on('playerLoaded', () => {
   PlayerInfo.update();
@@ -45,6 +43,8 @@ on('playerLoaded', () => {
     Movement.loop();
     Water.loop();
     Air.loop();
+
+    Vehicle.loop();
   }, 100);
 });
 
