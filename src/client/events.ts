@@ -48,5 +48,6 @@ export enum VehicleEvent {
   DRIVER      = `${Prefix.VEHICLE}Driver`,
   IN_AIR      = `${Prefix.VEHICLE}InAir`,
   ON_ROOF     = `${Prefix.VEHICLE}OnRoof`,
+  OFFROAD     = `${Prefix.VEHICLE}Offroad`,
   CRASHED     = `${Prefix.VEHICLE}Crashed`,
 }

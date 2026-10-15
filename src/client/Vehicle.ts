@@ -1,6 +1,6 @@
 import { PlayerInfo } from './main';
 import { BaseVehicleEvent, VehicleEvent } from './events';
-import { VehicleEntity } from './utils';
+import { OFFROAD_TERRAINS, VehicleEntity } from './utils';
 
 // Vehicle Events Handler
 class VehicleHandler extends PlayerInfo {
@@ -13,7 +13,7 @@ class VehicleHandler extends PlayerInfo {
   public driver     = false;
   public inAir      = false;
   public onRoof     = false;
-  public crashed    = false;
+  public offroad    = false;
 
   private get state() {
     return this._state;
@@ -21,7 +21,7 @@ class VehicleHandler extends PlayerInfo {
 
   private set state(state: BaseVehicleEvent) {
     if (this._state !== state) {
-      if (this.vehEntity !== null)
+      if (this.vehEntity)
         emit(this._state, false, this.vehEntity.id);
 
       emit(state, true, this.vehEntity?.id);
@@ -59,25 +59,34 @@ class VehicleHandler extends PlayerInfo {
     this.driver     = false;
     this.inAir      = false;
     this.onRoof     = false;
-    this.crashed    = false;
+    this.offroad    = false;
 
     emit(VehicleEvent.USE_VEHICLE, false, this.vehEntity?.id);
 
     this.vehEntity = null;
   }
+
+  private checkOffroad(vehicle: number) {
+    const driveType = GetVehicleDrivetrainType(GetEntityModel(vehicle));
+    
+    const isOffroad = driveType === 2
+      ? OFFROAD_TERRAINS.includes(GetVehicleWheelSurfaceMaterial(vehicle, 4))
+      || OFFROAD_TERRAINS.includes(GetVehicleWheelSurfaceMaterial(vehicle, 5))
+      : OFFROAD_TERRAINS.includes(GetVehicleWheelSurfaceMaterial(vehicle, 0))
+      || OFFROAD_TERRAINS.includes(GetVehicleWheelSurfaceMaterial(vehicle, 1));
+
+    if (this.offroad !== isOffroad)
+      this.sendEvent('offroad', VehicleEvent.OFFROAD, vehicle);
+  }
   
-  private baseLoop(ped: number): boolean {
+  private baseLoop(ped: number) {
     const inEnter = IsPedInAnyVehicle(ped, true);
     const inFull = IsPedInAnyVehicle(ped, false);
 
-    if (!inFull) {
-      this.state = inEnter
-        ? BaseVehicleEvent.ENTERING
-        : BaseVehicleEvent.EXITING;
-      return true;
-    } else this.state = BaseVehicleEvent.IN_VEHICLE;
-
-    return false;
+    if (!inFull) this.state = inEnter
+      ? BaseVehicleEvent.ENTERING
+      : BaseVehicleEvent.EXITING;
+    else this.state = BaseVehicleEvent.IN_VEHICLE;
   }
 
   public loop() {
@@ -85,7 +94,7 @@ class VehicleHandler extends PlayerInfo {
     const vehicle = GetVehiclePedIsUsing(ped);
     const useVehicle = vehicle !== 0;
 
-    if (!useVehicle && this.vehEntity !== null) {
+    if (!useVehicle && this.vehEntity) {
       this.reset();
       return;
     }
@@ -103,6 +112,29 @@ class VehicleHandler extends PlayerInfo {
 
     this.vehEntity.pos = pos;
 
-    if (this.baseLoop(ped)) return;
+    const driverPed = GetPedInVehicleSeat(this.vehEntity.id, -1)
+      || GetLastPedInVehicleSeat(this.vehEntity.id, -1);
+    const isDriver = driverPed !== 0 && driverPed === ped;
+    
+    if (this.driver !== isDriver)
+      this.sendEvent('driver', VehicleEvent.DRIVER, this.vehEntity.id);
+
+    if (this.inAir !== IsEntityInAir(this.vehEntity.id))
+      this.sendEvent('inAir', VehicleEvent.IN_AIR, this.vehEntity.id);
+
+    if (this.onRoof !== IsVehicleStuckOnRoof(this.vehEntity.id))
+      this.sendEvent('onRoof', VehicleEvent.ON_ROOF, this.vehEntity.id);
+
+    this.checkOffroad(this.vehEntity.id);
+    this.baseLoop(ped);
+  }
+
+  public tickLoop() {
+    if (!this.vehEntity) return;
+
+    if (HasEntityCollidedWithAnything(this.vehEntity.id))
+      emit(VehicleEvent.CRASHED, this.vehEntity.id);
   }
 }
+
+export const Vehicle = new VehicleHandler;

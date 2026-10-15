@@ -1,4 +1,5 @@
 import { Movement, Water, Air } from './Movement';
+import { Vehicle } from './Vehicle';
 
 // Main parent class to store player Ped and ID values
 export class PlayerInfo {
@@ -32,12 +33,18 @@ export class PlayerInfo {
 
 let updInterval: NodeJS.Timeout | null = null;
 
+setTick(() => {
+  Vehicle.tickLoop();
+});
+
 on('playerLoaded', () => {
   PlayerInfo.update();
   if (!updInterval) updInterval = setInterval(() => {
     Movement.loop();
     Water.loop();
     Air.loop();
+
+    Vehicle.loop();
   }, 100);
 });
 
