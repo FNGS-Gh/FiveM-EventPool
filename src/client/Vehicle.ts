@@ -14,6 +14,7 @@ class VehicleHandler extends PlayerInfo {
   public inAir      = false;
   public onRoof     = false;
   public offroad    = false;
+  public crashed    = false;
 
   private get state() {
     return this._state;
@@ -60,6 +61,7 @@ class VehicleHandler extends PlayerInfo {
     this.inAir      = false;
     this.onRoof     = false;
     this.offroad    = false;
+    this.crashed    = false;
 
     emit(VehicleEvent.USE_VEHICLE, false, this.vehEntity?.id);
 
@@ -94,8 +96,8 @@ class VehicleHandler extends PlayerInfo {
     const vehicle = GetVehiclePedIsUsing(ped);
     const useVehicle = vehicle !== 0;
 
-    if (!useVehicle && this.vehEntity) {
-      this.reset();
+    if (!useVehicle) {
+      if (this.vehEntity) this.reset();
       return;
     }
 
@@ -132,8 +134,10 @@ class VehicleHandler extends PlayerInfo {
   public tickLoop() {
     if (!this.vehEntity) return;
 
-    if (HasEntityCollidedWithAnything(this.vehEntity.id))
-      emit(VehicleEvent.CRASHED, this.vehEntity.id);
+    const isCrashed = HasEntityCollidedWithAnything(this.vehEntity.id);
+
+    if (this.crashed !== isCrashed)
+      this.sendEvent('crashed', VehicleEvent.CRASHED, this.vehEntity.id);
   }
 }
 

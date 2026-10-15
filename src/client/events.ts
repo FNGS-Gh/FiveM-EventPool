@@ -4,6 +4,7 @@ export enum Prefix {
   WATER     = 'Water:',
   AIR       = 'Air:',
   VEHICLE   = 'Vehicle:',
+  WEAPON    = 'Weapon:',
 }
 
 // Movement
@@ -50,4 +51,19 @@ export enum VehicleEvent {
   ON_ROOF     = `${Prefix.VEHICLE}OnRoof`,
   OFFROAD     = `${Prefix.VEHICLE}Offroad`,
   CRASHED     = `${Prefix.VEHICLE}Crashed`,
+}
+
+// Weapon
+export enum BaseWeaponEvent {
+  USE_FIREARM =  `${Prefix.WEAPON}UseFirearm`,
+  USE_MELEE = `${Prefix.WEAPON}UseMelee`,
+  USE_THROW = `${Prefix.WEAPON}UseThrow`,
+}
+
+export enum WeaponEvent {
+  USE_WEAPON =  `${Prefix.WEAPON}UseWeapon`,
+  AIMING =      `${Prefix.WEAPON}Aiming`,
+  ROLLING =     `${Prefix.WEAPON}Rolling`,
+  SHOOTING =    `${Prefix.WEAPON}Shooting`,
+  SWITCHING =   `${Prefix.WEAPON}Switching`,
 }

@@ -1,5 +1,6 @@
 import { Movement, Water, Air } from './Movement';
 import { Vehicle } from './Vehicle';
+import { Weapon } from './Weapon';
 
 // Main parent class to store player Ped and ID values
 export class PlayerInfo {
@@ -32,10 +33,7 @@ export class PlayerInfo {
 }
 
 let updInterval: NodeJS.Timeout | null = null;
-
-setTick(() => {
-  Vehicle.tickLoop();
-});
+let tickThread = false;
 
 on('playerLoaded', () => {
   PlayerInfo.update();
@@ -45,13 +43,30 @@ on('playerLoaded', () => {
     Air.loop();
 
     Vehicle.loop();
+
+    Weapon.loop();
   }, 100);
+
+  if (!tickThread) {
+    setTick(() => {
+      Vehicle.tickLoop();
+      Weapon.tickLoop();
+    });
+
+    tickThread = true;
+  }
 });
 
 on('PedChanged', (ped: number) => { // Edit 'PedChanged' to whatever client event handles player's ped change
   PlayerInfo.ped = ped;
 });
 
-globalThis.exports('IsMoving', () => Movement.moving);
-globalThis.exports('IsOnStairs', () => Movement.onStairs);
-globalThis.exports('IsDrowning', () => Water.drowning);
+globalThis.exports('IsPlayerMoving', (): boolean => Movement.moving);
+globalThis.exports('IsPlayerOnStairs', (): boolean => Movement.onStairs);
+globalThis.exports('IsPlayerDrowning', (): boolean => Water.drowning);
+
+globalThis.exports('IsVehicleMoving', (): boolean => Vehicle.moving);
+globalThis.exports('IsPlayerDriver', (): boolean => Vehicle.driver);
+globalThis.exports('IsVehicleOffroad', (): boolean => Vehicle.offroad);
+
+globalThis.exports('IsPlayerRolling', (): boolean => Weapon.rolling);
