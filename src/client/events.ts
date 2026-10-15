@@ -55,9 +55,9 @@ export enum VehicleEvent {
 
 // Weapon
 export enum BaseWeaponEvent {
-  USE_FIREARM =  `${Prefix.WEAPON}UseFirearm`,
-  USE_MELEE = `${Prefix.WEAPON}UseMelee`,
-  USE_THROW = `${Prefix.WEAPON}UseThrow`,
+  USE_FIREARM = `${Prefix.WEAPON}UseFirearm`,
+  USE_MELEE   = `${Prefix.WEAPON}UseMelee`,
+  USE_THROW   = `${Prefix.WEAPON}UseThrow`,
 }
 
 export enum WeaponEvent {
